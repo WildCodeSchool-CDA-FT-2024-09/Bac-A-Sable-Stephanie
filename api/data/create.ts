@@ -37,7 +37,7 @@ async function getRepos() {
       id: repo.id,
       name: repo.name,
       url: repo.url,
-      isPrivate: repo.isPrivate ? 0 : 1 // 0 for private, 1 for public
+      isPrivate: repo.isPrivate ? 1 : 2 // 1 for private, 2 for public
     });
 
     // Process languages for each repo
@@ -74,8 +74,8 @@ async function getRepos() {
 
   // Write status.json (Private/Public) data
   const status = [
-    { id: 0, label: 'Private' },
-    { id: 1, label: 'Public' }
+    { id: 1, label: 'Private' },
+    { id: 2, label: 'Public' }
   ];
 
   fs.writeFile('./data/status.json', JSON.stringify(status), (err) =>
