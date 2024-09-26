@@ -1,21 +1,26 @@
-import express, { Response, Request} from "express";
+import { Response, Request } from "express";
+
 import repos from "../../data/repos.json"
 import type { Repo } from "./repo.type"
 
-const repoControllers = express.Router();
-repoControllers.get('/', (_, res: Response) => {
-    res.status(200).json(repos)
-    
-}) 
+// Function to get all repos
+export const getAllRepos = (_: Request, res: Response) => {
+    res.status(200).json(repos);
+};
 
-repoControllers.get('/:id', (req: Request, res: Response) => {
-    const repo = repos.find(rep => rep.id === req.params.id) as Repo;
+// Function to get a repo by id
+export const getRepoById = (req: Request, res: Response) => {
+    const repo = repos.find((rep) => rep.id === req.params.id) as Repo;
     if (repo) {
-        res.status(200).json(repo)
+        res.status(200).json(repo);
     } else {
-        res.sendStatus(404)
+        res.sendStatus(404);
     }
-    
-    
-}) 
-export default repoControllers;
+};
+
+// Function to create a new repo
+export const createRepo = (req: Request, res: Response) => {
+    repos.push(req.body);
+    res.status(201).json(req.body);
+};
+
