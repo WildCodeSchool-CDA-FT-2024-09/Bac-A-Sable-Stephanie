@@ -1,8 +1,8 @@
 import express from 'express';
 import { Response, Request} from 'express';
 import repoRouter from"./repos/repo.router"
+import langRouter from './langs/lang.router';
 
-import langControllers from "./langs/lang.controllers"
 import statusControllers from "./status/status.controllers"
 
 const router = express.Router();
@@ -11,7 +11,7 @@ const router = express.Router();
      res.send ("Woot!")
  })
 router.use('/repos' , repoRouter);
-router.use('/langs', langControllers);
+router.use('/langs', langRouter);
 router.use('/status', statusControllers)
 
  export default router;
