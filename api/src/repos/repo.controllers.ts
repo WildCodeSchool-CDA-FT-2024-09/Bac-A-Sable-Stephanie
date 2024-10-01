@@ -1,57 +1,97 @@
 import { Response, Request } from "express";
-
-import repos from "../../data/repos.json"
-import type { Repo } from "./repo.type"
+// import repos from "../../data/repos.json";
+// import type { Repo } from "./repo.type";
+import RepoEntity from "./repo.entity";
+import { validate } from "class-validator";
 
 // Function to get all repos or query on isPrivate
-export const getAllRepos = (req: Request, res: Response) => {
-    const { status } = req.query; 
+export const getAllRepos = async (_req: Request, res: Response) => {
+  //   const { status } = req.query;
+  //   const result =
+  //     status !== undefined
+  //       ? repos.filter((repo: Repo) => repo.isPrivate === +status)
+  //       : repos;
+  //   res.status(200).json(result);
 
-    const result = status !== undefined 
-        ? repos.filter((repo: Repo) => repo.isPrivate === +status) 
-        : repos; 
-
-    res.status(200).json(result); 
+  try {
+    const repos = await RepoEntity.find();
+    res.status(200).json(repos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 // Function to get a repo by id
-export const getRepoById = (req: Request, res: Response) => {
-    const repo = repos.find((rep) => rep.id === req.params.id) as Repo;
+export const getRepoById = async (req: Request, res: Response) => {
+  //   const repo = repos.find((rep) => rep.id === req.params.id) as Repo;
+  //   if (repo) {
+  //     res.status(200).json(repo);
+  //   } else {
+  //     res.sendStatus(404);
+  //   }
+  try {
+    const repo = await RepoEntity.findOneBy({ id: req.params.id });
     if (repo) {
-        res.status(200).json(repo);
+      res.status(200).json(repo);
     } else {
-        res.sendStatus(404);
+      res.sendStatus(404); // Repo not found
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
-
 
 // Function to create a new repo
-export const createRepo = (req: Request, res: Response) => {
-    repos.push(req.body);
-    res.status(201).json(req.body);
-};
-// Function to update the whole repo
-export const updateRepo = (req: Request, res: Response) => {
-    const { id } = req.params;
-    const repoIndex = repos.findIndex((rep: Repo) => rep.id === id);
+export const createRepo = async (req: Request, res: Response) => {
+  // repos.push(req.body);
+  // res.status(201).json(req.body);
+  try {
+    const repo = new RepoEntity();
+    repo.id = req.body.id;
+    repo.name = req.body.name;
+    repo.url = req.body.url;
+    repo.isPrivate = req.body.isPrivate;
 
-    if (repoIndex !== -1) {
-        const existingRepo = repos[repoIndex]
-        if (req.body.name !== undefined) {
-            existingRepo.name = req.body.name;
-        }
-        if (req.body.url !== undefined) {
-            existingRepo.url = req.body.url;
-        }
-        if (req.body.isPrivate !== undefined) {
-            existingRepo.isPrivate = req.body.isPrivate;
-        }
-
-        // Respond with the updated repo
-        res.status(200).json(existingRepo); 
+    const errors = await validate(repo);
+    if (errors.length > 0) {
+      res.status(422).json(errors);
     } else {
-        res.sendStatus(404); // Repo not found
+      await repo.save();
+      res.status(201).json(repo);
     }
+  } catch (error) {
+    console.error(error); // Log the error for debugging
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Function to update the whole repo
+export const updateRepo = async (req: Request, res: Response) => {
+  try {
+    const repo = await RepoEntity.findOneBy({ id: req.params.id });
+    if (repo) {
+      // Update the repo properties
+      repo.name = req.body.name !== undefined ? req.body.name : repo.name;
+      repo.url = req.body.url !== undefined ? req.body.url : repo.url;
+      repo.isPrivate =
+        req.body.isPrivate !== undefined ? req.body.isPrivate : repo.isPrivate;
+
+      const errors = await validate(repo);
+      if (errors.length > 0) {
+        res.status(422).json(errors);
+      } else {
+        await repo.save();
+        res.status(200).json(repo);
+      }
+    } else {
+      res.sendStatus(404); // Repo not found
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 // Function to update repo with isPrivate and name
 // export const modifyRepo = (req: Request, res: Response) => {
@@ -74,7 +114,7 @@ export const updateRepo = (req: Request, res: Response) => {
 //         // Validate and update the 'name' field
 //         if (name && typeof name === "string") {
 //             repo.name = name; // Update the name field
-            
+
 //             // Update the 'url' based on the new name
 //             repo.url = `https://github.com/brewost/${name}`;
 //         }
@@ -86,17 +126,33 @@ export const updateRepo = (req: Request, res: Response) => {
 //     }
 // };
 
+export const deleteRepoById = async (req: Request, res: Response) => {
+  // const { id } = req.params;
 
+  // const index = repos.findIndex((rep: Repo) => rep.id === id);
 
-export const deleteRepoById = (req: Request, res: Response) => {
-    const { id } = req.params; 
+  // if (index !== -1) {
+  //   repos.splice(index, 1); // Remove the repo directly from the array
+  //   res.sendStatus(204); // No Content
+  // } else {
+  //   res.sendStatus(404); // Not found
+  // }
 
-    const index = repos.findIndex((rep: Repo) => rep.id === id); 
+  try {
+    const repoRepository = RepoEntity;
 
-    if (index !== -1) { 
-        repos.splice(index, 1); // Remove the repo directly from the array
-        res.sendStatus(204); // No Content
+    // Directly use the `delete` method, passing the ID
+    const deleteResult = await repoRepository.delete(req.body.id);
+
+    if (deleteResult.affected === 1) {
+      // If a record was deleted (affected > 0), return 204 No Content
+      res.sendStatus(204);
     } else {
-        res.sendStatus(404); // Not found
+      // If no record was found (affected === 0), return 404 Not Found
+      res.sendStatus(404);
     }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
