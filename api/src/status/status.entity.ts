@@ -1,6 +1,13 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column } from "typeorm";
-import { IsEnum } from "class-validator";
-import { StatusLabel } from "./status.enum";
+import {
+  BaseEntity,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+} from "typeorm";
+// import { IsEnum } from "class-validator";
+// import { StatusLabel } from "./status.enum";
+import Repo from "../repos/repo.entity";
 
 @Entity()
 export default class Status extends BaseEntity {
@@ -8,6 +15,8 @@ export default class Status extends BaseEntity {
   id: number;
 
   @Column()
-  @IsEnum(StatusLabel)
+  //   @IsEnum(StatusLabel)
   label: string;
+  @OneToMany(() => Repo, (repo) => repo.status)
+  repos?: Repo[];
 }

@@ -1,6 +1,17 @@
-import { BaseEntity, Entity, PrimaryColumn, Column, Unique } from "typeorm";
+import {
+  BaseEntity,
+  Entity,
+  PrimaryColumn,
+  Column,
+  Unique,
+  ManyToOne,
+  JoinColumn,
+  ManyToMany,
+  JoinTable,
+} from "typeorm";
 import { Min, Max, IsString } from "class-validator";
-
+import Status from "../status/status.entity";
+import Lang from "../langs/lang.entity";
 @Entity()
 @Unique(["id"])
 export default class Repo extends BaseEntity {
@@ -16,8 +27,12 @@ export default class Repo extends BaseEntity {
   @IsString()
   url: string;
 
-  @Column()
+  @ManyToOne(() => Status, (status) => status.id)
+  @JoinColumn({ name: "statusId" })
   @Min(1)
   @Max(2)
-  isPrivate: number;
+  status: Status;
+  @ManyToMany(() => Lang, (lang) => lang.id)
+  @JoinTable()
+  languages: Lang[];
 }
