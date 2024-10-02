@@ -1,5 +1,8 @@
 import { Response, Request } from "express";
+import { In } from "typeorm";
 import RepoEntity from "./repo.entity";
+import StatusEntity from "../status/status.entity";
+import LangEntity from "../langs/lang.entity";
 
 export const getAllRepos = async (_req: Request, res: Response) => {
   try {
@@ -39,8 +42,18 @@ export const createRepo = async (req: Request, res: Response) => {
     repo.id = req.body.id;
     repo.name = req.body.name;
     repo.url = req.body.url;
-    repo.status = req.body.status;
-    repo.languages = req.body.languages;
+
+    const status = await StatusEntity.findOneOrFail({
+      where: { id: req.body.status },
+    });
+    repo.status = status;
+
+    const langs = await LangEntity.find({
+      where: { id: In(req.body.languages) },
+    });
+    repo.languages = langs;
+
+    // repo.languages = req.body.languages;
 
     await repo.save();
     res.status(201).json(repo);

@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "fetch": "gh repo list brewost --json id,name,url,isPrivate,languages >> ./data/raw.json",
     "create": "ts-node-dev ./data/create.ts",
-    "dev": "ts-node-dev ./src/index.ts"
+    "dev": "ts-node-dev ./src/index.ts",
+    "seed": "ts-node-dev ./src/seeder.ts"
   },
   "author": "",
   "license": "ISC",
