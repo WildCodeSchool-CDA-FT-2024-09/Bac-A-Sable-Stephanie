@@ -4,8 +4,12 @@ meta {
   seq: 1
 }
 
-get {
+post {
   url: http://localhost:3001/api/status/
   body: json
   auth: none
+}
+
+body:json {
+  {"label":"Public"}
 }
