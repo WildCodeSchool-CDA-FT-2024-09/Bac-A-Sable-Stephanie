@@ -23,7 +23,14 @@ export const getAllRepos = async (_req: Request, res: Response) => {
 // Function to get a repo by id
 export const getRepoById = async (req: Request, res: Response) => {
   try {
-    const repo = await RepoEntity.findOneBy({ id: req.params.id });
+    const repo = await RepoEntity.findOne({
+      where: { id: req.params.id },
+      relations: {
+        status: true,
+        languages: true,
+      },
+    });
+
     if (repo) {
       res.status(200).json(repo);
     } else {
@@ -34,7 +41,6 @@ export const getRepoById = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 //Function to create a new repo
 export const createRepo = async (req: Request, res: Response) => {
   try {

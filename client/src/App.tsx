@@ -1,34 +1,17 @@
-import "./App.css";
-import { useEffect, useState } from "react";
-import connection from "./services/connection";
-import type { Repo } from "./types/repotype";
-// import data from "./assets/data.json";
-import RepoCard from "./components/RepoCard";
+import "./index.css";
+
+import { Outlet } from "react-router-dom";
+import Nav from "./components/Nav";
+import Footer from "./components/Footer";
 
 function App() {
-  const [repos, setRepos] = useState<Repo[]>([]);
-
-  useEffect(() => {
-    console.log("I'm the useEffect");
-    const fetchRepos = async () => {
-      try {
-        const repos = await connection.get<Repo[]>("/api/repos");
-        setRepos(repos.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchRepos();
-  }, []);
-
   return (
-    <main>
-      {repos.length ? repos.map((repo: Repo) => (
-        <RepoCard key={repo.id} name={repo.name} url={repo.url} id = {""}  />
-      )): <p>LOADING</p>}
-    </main>
+    <div className="container mx-auto flex min-h-[95vh] flex-col items-center justify-between bg-slate-500">
+      <Nav />
+      <Outlet />
+      <Footer />
+    </div>
   );
 }
 
 export default App;
-
