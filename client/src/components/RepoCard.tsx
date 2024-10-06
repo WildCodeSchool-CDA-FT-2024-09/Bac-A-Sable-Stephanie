@@ -5,9 +5,8 @@ function RepoCard({ repo }: { repo: Repo }) {
   return (
     <Link
       to={`/detail/${repo.id}`} // Navigate to the detail page
-      className="mb-4 w-full max-w-md transform cursor-pointer rounded-lg bg-white p-6 shadow-lg transition-transform duration-300 ease-in-out hover:scale-105" // Added hover scale and cursor pointer
+      className="mb-4 w-full max-w-md transform cursor-pointer rounded-lg bg-white p-6 shadow-lg transition-transform duration-300 ease-in-out hover:scale-105"
     >
-      {/* Wrap the entire card with Link to make it clickable */}
       <p className="mb-2 text-2xl font-semibold">{repo.name}</p>
       <p className="mb-2 text-lg font-semibold">Status: {repo.status.label}</p>
 
@@ -18,14 +17,6 @@ function RepoCard({ repo }: { repo: Repo }) {
           <li className="text-gray-500">Nothing to see here, move along</li>
         )}
       </ul>
-      <a
-        href={repo.url}
-        target="_blank" // Opens link in a new tab
-        rel="noopener noreferrer" // Security best practices
-        className="text-blue-500 underline decoration-blue-500 hover:text-purple-500 hover:decoration-purple-500"
-      >
-        {repo.url}
-      </a>
     </Link>
   );
 }

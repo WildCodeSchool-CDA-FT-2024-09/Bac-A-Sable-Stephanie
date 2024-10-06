@@ -26,6 +26,16 @@ const router = createBrowserRouter([
         },
       },
       {
+        path: "/repos/:language",
+        element: <Repos />,
+        loader: async ({ params }) => {
+          const repos = await connection.get(
+            `/api/repos/languages/${params.language}`,
+          );
+          return repos.data;
+        },
+      },
+      {
         path: "/detail/:id",
         element: <Detail />,
         loader: async ({ params }) => {

@@ -12,4 +12,5 @@ export type Status = {
 export type Language = {
   id: number;
   label: string;
+  repos: Repo[];
 };

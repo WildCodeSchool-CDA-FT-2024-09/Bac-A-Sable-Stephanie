@@ -15,7 +15,6 @@ function Navbar() {
           />
         </Link>
       </div>
-      <div className="mt-2 text-white">Filter Lang here</div>
     </header>
   );
 }
