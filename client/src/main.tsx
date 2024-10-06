@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import App from "./App.tsx";
-import Detail from "./pages/Detail.tsx";
+import RepoDetail from "./pages/RepoDetail.tsx";
 import Error from "./pages/Error.tsx";
 import Repos from "./pages/Repos.tsx";
 
@@ -37,7 +37,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/detail/:id",
-        element: <Detail />,
+        element: <RepoDetail />,
         loader: async ({ params }) => {
           const repo = await connection.get(`/api/repos/${params.id}`);
           console.log("Loader", repo);

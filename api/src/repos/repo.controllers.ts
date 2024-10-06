@@ -83,6 +83,7 @@ export const getRepoById = async (req: Request, res: Response) => {
       relations: {
         status: true,
         languages: true,
+        comments: true,
       },
     });
 

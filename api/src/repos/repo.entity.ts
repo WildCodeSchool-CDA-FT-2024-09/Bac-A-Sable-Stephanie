@@ -8,10 +8,12 @@ import {
   JoinColumn,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from "typeorm";
 import { Min, Max, IsString } from "class-validator";
 import Status from "../status/status.entity";
 import Lang from "../langs/lang.entity";
+import Comment from "../comment/comment.entity";
 @Entity()
 @Unique(["id"])
 export default class Repo extends BaseEntity {
@@ -36,4 +38,7 @@ export default class Repo extends BaseEntity {
   @ManyToMany(() => Lang, (lang) => lang.repos)
   @JoinTable()
   languages?: Lang[];
+
+  @OneToMany(() => Comment, (comment) => comment.repo)
+  comments?: Comment[];
 }

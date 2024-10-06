@@ -7,10 +7,10 @@ function Repos() {
   const repos = useLoaderData() as Repo[];
 
   return (
-    <>
+    <main>
       <LanguageFilter />
       <RepoList repos={repos} />;
-    </>
+    </main>
   );
 }
 

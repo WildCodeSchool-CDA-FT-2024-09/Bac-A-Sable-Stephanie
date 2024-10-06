@@ -1,11 +1,8 @@
-import { useLoaderData } from "react-router-dom";
 import { Repo } from "../types/repotype"; // Import the Repo type
 
-const Detail = () => {
-  const repo = useLoaderData() as Repo;
-
+const Detail = ({ repo }: { repo: Repo }) => {
   return (
-    <main className="detail-page">
+    <div className="detail-page">
       <h1 className="mb-4 text-3xl font-bold">Repository Details:</h1>
 
       <div className="repo-info rounded-lg border bg-white p-4 shadow-md">
@@ -17,9 +14,7 @@ const Detail = () => {
 
         <ul className="mb-2 flex gap-3 text-sm font-semibold">
           {repo.languages.length > 0 ? (
-            repo.languages.map((lang, index) => (
-              <li key={index}>{lang.label}</li>
-            ))
+            repo.languages.map((lang) => <li key={lang.id}>{lang.label}</li>)
           ) : (
             <li className="text-gray-500">Nothing to see here, move along</li>
           )}
@@ -33,7 +28,7 @@ const Detail = () => {
           {repo.url}
         </a>
       </div>
-    </main>
+    </div>
   );
 };
 
