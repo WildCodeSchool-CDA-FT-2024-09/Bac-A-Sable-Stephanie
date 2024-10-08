@@ -3,22 +3,24 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  Unique,
   ManyToMany,
 } from "typeorm";
-import { IsString } from "class-validator";
-import Repo from "../repos/repo.entity";
 
+import { Field, ObjectType } from "type-graphql";
+import { Repo } from "../repos/repo.entity";
+
+@ObjectType()
 @Entity()
-@Unique(["label"])
-export default class Lang extends BaseEntity {
+export class Lang extends BaseEntity {
+  @Field()
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Field()
   @Column()
-  @IsString()
   label: string;
 
+  @Field(() => [Repo])
   @ManyToMany(() => Repo, (repo) => repo.languages)
   repos: Repo[];
 }

@@ -5,17 +5,25 @@ import {
   Column,
   ManyToOne,
 } from "typeorm";
+import { Field, ObjectType } from "type-graphql";
+import { Repo } from "../repos/repo.entity";
 
-import Repo from "../repos/repo.entity";
-
+@ObjectType()
 @Entity()
-export default class Comment extends BaseEntity {
+export class Comment extends BaseEntity {
+  @Field()
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Field()
   @Column()
   author: string;
+
+  @Field()
   @Column()
   text: string;
+
+  @Field(() => Repo)
   @ManyToOne(() => Repo, (repo: { comment: any }) => repo.comment)
   repo: Repo;
 }
