@@ -38,20 +38,32 @@ export default class RepoResolver {
     console.info(repos);
     return repos;
   }
-
-  //   @Mutation(() => Repo)
-  //   async createNewRepo(@Arg("data") newRepo: RepoInput) {
-  //     //const newRepo: RepoInput = req.body.data
-  //     // fonction de validation
-  //     console.info(newRepo);
-  //     const repo = await Repo.findOneOrFail({
-  //       where: { id: "R_kgDOM2SnhA" },
-  //       relations: {
-  //         langs: true,
-  //         status: true,
-  //       },
-  //     });
-  //     console.log(repo);
-  //     return repo;
-  //   }
 }
+
+//    @Mutation(() => Repo)
+// async createNewRepo(@Arg("data") newRepo: RepoInput) {
+//   //const newRepo: RepoInput = req.body.data
+//   // fonction de validation
+//   console.info(newRepo);
+
+//   const repo = new Repo();
+//   repo.id = newRepo.id;
+//   repo.name = newRepo.name;
+//   repo.url = newRepo.url;
+
+//   const status = await Status.findOneOrFail({
+//     where: { id: +newRepo.isPrivate },
+//   });
+//   repo.status = status;
+
+//   await repo.save();
+//   console.log("repo", repo);
+//   const myRepo = await Repo.findOneOrFail({
+//     where: { id: newRepo.id },
+//     relations: {
+//       langs: true,
+//       status: true,
+//     },
+//   });
+//   console.log("myRepo", myRepo);
+//   return myRepo;

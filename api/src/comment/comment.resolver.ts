@@ -1,20 +1,26 @@
 import { Comment } from "./comment.entity";
-import { Query, Resolver } from "type-graphql";
+import { Repo } from "../repos/repo.entity";
+import { Arg, Mutation, Query, Resolver, InputType, Field } from "type-graphql";
 
-// @InputType()
-// class CommentInput implements Partial<Comment> {
-//   @Field()
-//   author: string;
+// Define CommentInput as a GraphQL InputType
+@InputType()
+class CommentInput implements Partial<Comment> {
+  @Field()
+  author: string;
 
-//   @Field()
-//    text: string;
-// }
+  @Field()
+  text: string;
 
+  @Field()
+  repoId: string;
+}
+
+// Resolver for Comment
 @Resolver(Comment)
 export default class CommentResolver {
-  // Methode GET pour tous les repos
+  // Query to fetch all repos with their related comments
   @Query(() => [Comment])
-  async fullrepos() {
+  async fullcomments() {
     const repos = await Comment.find({
       relations: {
         repo: true,
@@ -23,33 +29,36 @@ export default class CommentResolver {
     console.info(repos);
     return repos;
   }
+
+  // Mutation to create a new comment and associate it with a repository
+  @Mutation(() => Comment)
+  async createNewComment(
+    @Arg("data") newCommentData: CommentInput
+  ): Promise<Comment> {
+    try {
+      // Find the associated repository using the provided repoId
+      const repo = await Repo.findOneOrFail({
+        where: { id: newCommentData.repoId },
+      });
+      if (!repo) {
+        throw new Error("Repo not found");
+      }
+
+      // Create a new comment instance and associate it with the repo
+      const comment = Comment.create({
+        author: newCommentData.author,
+        text: newCommentData.text,
+        repo: repo, // Set the relationship to the found repo
+      });
+
+      // Save the new comment to the database
+      await comment.save();
+
+      console.info(comment);
+      return comment;
+    } catch (error) {
+      console.error("Error creating comment:", error);
+      throw new Error("Failed to create comment");
+    }
+  }
 }
-
-//   @Mutation(() => Comment)
-//   async createNewComment(
-//     @Arg("data") newCommentData: CommentInput,
-//     @Arg("repoId") repoId: string // Assuming the comment belongs to a Repo
-//   ) {
-//     try {
-//       // Find the associated repo
-//       const repo = await Repo.findOneBy({ id: repoId });
-//       if (!repo) {
-//         throw new Error("Repo not found");
-//       }
-
-//       // Create a new comment instance
-//       const comment = Comment.create({
-//         author: newCommentData.author,
-//         text: newCommentData.text,
-//         repo, // Set the relationship
-//       });
-
-//       // Save the new comment to the database
-//       await comment.save();
-
-//       console.info(comment);
-//       return comment;
-//     } catch (error) {
-//       console.error("Error creating comment:", error);
-//       throw new Error("Failed to create comment");
-//     }

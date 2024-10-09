@@ -1,6 +1,6 @@
 import { Response, Request } from "express";
 
-import Comment from "./comment.entity";
+import { Comment } from "./comment.entity";
 
 // Function to get all languages
 export const getAllComments = async (_: Request, res: Response) => {
