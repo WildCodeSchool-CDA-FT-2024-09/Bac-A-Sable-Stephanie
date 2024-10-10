@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import Lang from "../langs/lang.entity";
+import { Lang } from "../langs/lang.entity";
 
 // Function to get all languages
 export const getAllLangs = async (_: Request, res: Response) => {

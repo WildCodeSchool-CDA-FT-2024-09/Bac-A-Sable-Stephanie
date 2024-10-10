@@ -22,5 +22,5 @@ export class Lang extends BaseEntity {
 
   @Field(() => [Repo])
   @ManyToMany(() => Repo, (repo) => repo.languages)
-  repos: Repo[];
+  repos?: Repo[];
 }

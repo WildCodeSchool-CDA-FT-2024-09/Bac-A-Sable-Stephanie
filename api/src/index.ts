@@ -30,6 +30,7 @@ import AppDataSource from "./data-source";
 import { buildSchema } from "type-graphql";
 import RepoResolver from "./repos/repo.resolvers";
 import CommentResolver from "./comment/comment.resolver";
+import LangResolver from "./langs/lang.resolvers";
 
 // const typeDefs = `#graphql
 
@@ -76,7 +77,7 @@ import CommentResolver from "./comment/comment.resolver";
 (async () => {
   await AppDataSource.initialize();
   const schema = await buildSchema({
-    resolvers: [RepoResolver, CommentResolver],
+    resolvers: [RepoResolver, CommentResolver, LangResolver],
   });
 
   const server = new ApolloServer({

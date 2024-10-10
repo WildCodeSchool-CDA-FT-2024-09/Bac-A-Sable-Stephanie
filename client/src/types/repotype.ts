@@ -4,7 +4,7 @@ export type Repo = {
   url: string;
   status: Status;
   languages: Language[];
-  comments: Comment[];
+  comments?: Comment[];
 };
 export type Status = {
   id: number;
@@ -13,7 +13,7 @@ export type Status = {
 export type Language = {
   id: number;
   label: string;
-  repos: Repo[];
+  repos?: Repo[];
 };
 export type Comment = {
   id: number;

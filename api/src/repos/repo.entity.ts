@@ -50,14 +50,3 @@ export class Repo extends BaseEntity {
   @OneToMany(() => Comment, (comment) => comment.repo)
   comments?: Comment[];
 }
-@ObjectType()
-export class LightRepo extends BaseEntity {
-  @Field(() => ID)
-  id: string;
-
-  @Field()
-  name: string;
-
-  @Field()
-  url: string;
-}
