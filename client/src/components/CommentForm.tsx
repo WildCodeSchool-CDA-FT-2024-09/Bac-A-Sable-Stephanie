@@ -1,48 +1,43 @@
 import { useState } from "react";
-import connection from "../services/connection";
-import { Comment } from "../types/repotype";
+import { DocumentNode, gql, useMutation } from "@apollo/client";
 
+const CREATE_NEW_COMMENT = gql`
+  mutation CreateNewComment($data: CommentInput!) {
+    createNewComment(data: $data) {
+      author
+      text
+    }
+  }
+`;
 const CommentForm = ({
   repoId,
-  setComments,
+  refetchQuery,
 }: {
   repoId: string;
-  setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
+  refetchQuery: DocumentNode;
 }) => {
+  const [createComment] = useMutation(CREATE_NEW_COMMENT);
+
   const [author, setAuthor] = useState("");
   const [text, setText] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Function to post a comment
-  const postComment = async () => {
-    setIsSubmitting(true); // Start submitting
-
-    const commentData = {
+  const variables = {
+    data: {
       author,
       text,
       repoId,
-    };
-
-    try {
-      const response = await connection.post("/api/comment", commentData);
-      if (response.status === 201) {
-        setComments((prev) => [...prev, response.data]);
-      }
-
-      // Reset the form fields
-      setAuthor("");
-      setText("");
-    } catch (error) {
-      console.error("Error posting comment:", error);
-    } finally {
-      setIsSubmitting(false); // End submitting
-    }
+    },
   };
 
   // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form behavior
-    postComment(); // Call the postComment function
+    await createComment({
+      variables: variables,
+      refetchQueries: [
+        { query: refetchQuery, variables: { repobyidId: repoId } },
+      ],
+    }); // Call the postComment function
   };
 
   return (
@@ -63,7 +58,6 @@ const CommentForm = ({
             onChange={(e) => setAuthor(e.target.value)}
             className="w-full rounded-md border p-2 shadow-sm focus:border-blue-500 focus:outline-none"
             placeholder="Enter your name"
-            disabled={isSubmitting} // Disable input while submitting
           />
         </div>
 
@@ -79,7 +73,6 @@ const CommentForm = ({
             className="w-full rounded-md border p-2 shadow-sm focus:border-blue-500 focus:outline-none"
             placeholder="Write your comment here..."
             rows={4}
-            disabled={isSubmitting} // Disable input while submitting
           ></textarea>
         </div>
 
@@ -87,9 +80,8 @@ const CommentForm = ({
         <button
           type="submit"
           className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:opacity-50"
-          disabled={isSubmitting} // Disable button while submitting
         >
-          {isSubmitting ? "Posting..." : "Post Comment"}
+          Post Comment
         </button>
       </form>
     </div>

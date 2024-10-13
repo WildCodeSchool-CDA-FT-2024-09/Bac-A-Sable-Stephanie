@@ -1,10 +1,7 @@
-//import { useLoaderData } from "react-router-dom";
-//import { useState } from "react";
 import { useParams } from "react-router-dom";
 import Detail from "../components/Detail";
 import CommentDetail from "../components/CommentDetail";
-//import CommentForm from "../components/CommentForm";
-//import { Repo } from "../types/repotype";
+import CommentForm from "../components/CommentForm";
 import { useQuery, gql } from "@apollo/client";
 
 const GET_REPO_DETAILS = gql`
@@ -35,13 +32,12 @@ function ReposDetail() {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading repositories.</p>;
-  //const repo = useLoaderData() as Repo;
-  // const [comments, setComments] = useState(repo.comments);
+
   return (
     <main>
       <Detail repo={data.repobyid} />
       <CommentDetail comments={data.repobyid.comments} />
-      {/* <CommentForm repoId={repo.id} setComments={setComments} /> */}
+      <CommentForm repoId={data.repobyid.id} refetchQuery={GET_REPO_DETAILS} />
     </main>
   );
 }
