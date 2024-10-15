@@ -1,4 +1,4 @@
-import { Comment } from "../types/repotype";
+import { Comment } from "../generated/graphql-types";
 
 const CommentDetail = ({ comments }: { comments: Comment[] }) => {
   return (
