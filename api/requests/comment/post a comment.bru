@@ -1,0 +1,19 @@
+meta {
+  name: post a comment
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3001/api/comment/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "author": "John Doe",
+    "text": "This is a great repository!",
+    "repoId": "R_kgDOMu-cXA"
+  }
+}
