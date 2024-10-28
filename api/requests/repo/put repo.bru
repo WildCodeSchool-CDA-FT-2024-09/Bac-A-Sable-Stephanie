@@ -1,0 +1,20 @@
+meta {
+  name: put repo
+  type: http
+  seq: 5
+}
+
+put {
+  url: http://localhost:3001/api/repos/abc12345
+  body: json
+  auth: none
+}
+
+body:json {
+   {
+      "id": "abc12345",
+      "name": "My Awesome Repository is putting awesome",
+      "url": "https://github.com/my-awesome-repo",
+      "isPrivate": 1
+    }
+}
