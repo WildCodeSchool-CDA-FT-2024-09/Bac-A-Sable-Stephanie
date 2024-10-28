@@ -1,4 +1,4 @@
-import { Repo } from "../types/repotype"; // Import the Repo type
+import { Repo } from "../generated/graphql-types"; // Import the Repo type
 
 const Detail = ({ repo }: { repo: Repo }) => {
   return (

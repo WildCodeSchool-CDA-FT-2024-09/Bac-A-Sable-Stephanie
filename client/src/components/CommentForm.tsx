@@ -1,48 +1,61 @@
 import { useState } from "react";
-import { DocumentNode, gql, useMutation } from "@apollo/client";
+import { useCreateNewCommentMutation } from "../generated/graphql-types"; // Import the generated mutation
 
-const CREATE_NEW_COMMENT = gql`
-  mutation CreateNewComment($data: CommentInput!) {
-    createNewComment(data: $data) {
-      author
-      text
-    }
-  }
-`;
 const CommentForm = ({
   repoId,
-  refetchQuery,
+  refetch,
 }: {
   repoId: string;
-  refetchQuery: DocumentNode;
+  refetch: () => Promise<unknown>;
 }) => {
-  const [createComment] = useMutation(CREATE_NEW_COMMENT);
+  // Use the generated mutation hook
+  const [createComment, { error }] = useCreateNewCommentMutation();
 
   const [author, setAuthor] = useState("");
   const [text, setText] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const variables = {
-    data: {
-      author,
-      text,
-      repoId,
-    },
-  };
-
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent default form behavior
-    await createComment({
-      variables: variables,
-      refetchQueries: [
-        { query: refetchQuery, variables: { repobyidId: repoId } },
-      ],
-    }); // Call the postComment function
+    e.preventDefault();
+
+    // Basic form validation
+    if (!author.trim() || !text.trim()) {
+      setErrorMessage("Both name and comment text are required.");
+      return;
+    }
+
+    try {
+      // Clear any previous error messages
+      setErrorMessage(null);
+
+      // Execute the mutation
+      await createComment({
+        variables: {
+          data: {
+            author,
+            text,
+            repoId,
+          },
+        },
+      });
+
+      // After successful mutation, reset the form
+      setAuthor("");
+      setText("");
+
+      // Refetch the comments after posting
+      await refetch();
+    } catch {
+      setErrorMessage("Failed to post the comment. Please try again.");
+    }
   };
 
   return (
     <div className="post-comment-section mt-8">
       <h2 className="mb-4 text-2xl font-semibold">Post a Comment</h2>
+
+      {/* Display error message */}
+      {errorMessage && <div className="mb-4 text-red-600">{errorMessage}</div>}
 
       {/* Comment Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -79,11 +92,18 @@ const CommentForm = ({
         {/* Submit button */}
         <button
           type="submit"
-          className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:opacity-50"
+          className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
         >
           Post Comment
         </button>
       </form>
+
+      {/* Error message from the GraphQL mutation */}
+      {error && (
+        <div className="mt-4 text-red-600">
+          {error.message || "Something went wrong while posting the comment."}
+        </div>
+      )}
     </div>
   );
 };
