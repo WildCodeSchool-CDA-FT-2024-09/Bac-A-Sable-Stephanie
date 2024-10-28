@@ -1,8 +1,8 @@
 import { DataSource } from "typeorm";
-import Repo from "./repos/repo.entity";
-import Status from "./status/status.entity";
-import Lang from "./langs/lang.entity";
-import Comment from "./comment/comment.entity";
+import { Repo } from "./repos/repo.entity";
+import { Status } from "./status/status.entity";
+import { Lang } from "./langs/lang.entity";
+import { Comment } from "./comment/comment.entity";
 
 const AppDataSource = new DataSource({
   type: "sqlite",

@@ -5,18 +5,22 @@ import {
   Column,
   OneToMany,
 } from "typeorm";
-// import { IsEnum } from "class-validator";
-// import { StatusLabel } from "./status.enum";
-import Repo from "../repos/repo.entity";
 
+import { Repo } from "../repos/repo.entity";
+import { Field, ObjectType } from "type-graphql";
+
+@ObjectType()
 @Entity()
-export default class Status extends BaseEntity {
+export class Status extends BaseEntity {
+  @Field()
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Field()
   @Column()
-  //   @IsEnum(StatusLabel)
   label: string;
+
+  @Field(() => [Repo])
   @OneToMany(() => Repo, (repo) => repo.status)
   repos?: Repo[];
 }

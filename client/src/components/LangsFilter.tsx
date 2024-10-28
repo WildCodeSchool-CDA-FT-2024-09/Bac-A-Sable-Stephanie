@@ -1,26 +1,7 @@
-import { useEffect, useState } from "react";
-import connection from "../services/connection";
 import type { Language } from "../types/repotype";
 import { Link } from "react-router-dom";
 
-const LanguageFilter = () => {
-  const [languages, setLanguages] = useState<Language[]>([]);
-
-  // Fetch languages from API
-  const fetchLanguages = async () => {
-    try {
-      const response = await connection.get<Language[]>("api/langs");
-      const langdata = response.data;
-      setLanguages(langdata);
-    } catch (error) {
-      console.error("Error fetching languages:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchLanguages(); // Fetch languages on component mount
-  }, []);
-
+const LanguageFilter = ({ languages }: { languages: Language[] }) => {
   return (
     <div>
       <div className="sticky top-[96px] z-10 flex w-full flex-row justify-center gap-2 bg-slate-500 pb-4">
