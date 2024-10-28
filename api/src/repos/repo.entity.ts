@@ -27,12 +27,13 @@ export default class Repo extends BaseEntity {
   @IsString()
   url: string;
 
-  @ManyToOne(() => Status, (status) => status.id)
+  @ManyToOne(() => Status, (status) => status.repos)
   @JoinColumn({ name: "statusId" })
   @Min(1)
   @Max(2)
   status: Status;
-  @ManyToMany(() => Lang, (lang) => lang.id)
+
+  @ManyToMany(() => Lang, (lang) => lang.repos)
   @JoinTable()
-  languages: Lang[];
+  languages?: Lang[];
 }

@@ -5,7 +5,11 @@ meta {
 }
 
 post {
-  url: http://localhost:3001/api/repos/
-  body: none
+  url: http://localhost:3001/api/langs/
+  body: json
   auth: none
+}
+
+body:json {
+  {"label":"HTML"}
 }
