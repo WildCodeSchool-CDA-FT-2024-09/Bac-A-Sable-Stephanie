@@ -1,12 +1,11 @@
 import AppDataSource from "./data-source";
-import LangEntity from "./langs/lang.entity";
+import { Lang as LangEntity } from "./langs/lang.entity";
 import langs from "../data/langs.json";
-import StatusEntity from "./status/status.entity";
+import { Status as StatusEntity } from "./status/status.entity";
 import status from "../data/status.json";
-import RepoEntity from "./repos/repo.entity";
+import { Repo as RepoEntity } from "./repos/repo.entity";
 import repo from "../data/repos.json";
 import lang_by_repo from "../data/lang_by_repo.json";
-import Status from "./status/status.entity";
 
 (async () => {
   await AppDataSource.initialize();
@@ -14,14 +13,19 @@ import Status from "./status/status.entity";
 
   try {
     await queryRunner.startTransaction();
-    await queryRunner.query("DELETE FROM repo_languages_lang");
-    await queryRunner.query("DELETE FROM lang");
-    await queryRunner.query("DELETE FROM repo");
-    await queryRunner.query("DELETE FROM status");
+    await queryRunner.query("TRUNCATE repo_languages_lang CASCADE");
+    await queryRunner.query("TRUNCATE lang CASCADE");
+    await queryRunner.query("TRUNCATE repo CASCADE");
+    await queryRunner.query("TRUNCATE status CASCADE");
+    await queryRunner.commitTransaction();
 
-    await queryRunner.query(
-      'DELETE FROM sqlite_sequence WHERE name="status" OR name="lang"'
-    );
+    // Postgres reset sequence
+    await queryRunner.query("ALTER SEQUENCE lang_id_seq RESTART WITH 1");
+    await queryRunner.query("ALTER SEQUENCE status_id_seq RESTART WITH 1");
+    await queryRunner.query("ALTER SEQUENCE comment_id_seq RESTART WITH 1");
+    // await queryRunner.query(
+    // `TRUNCATE TABLE status, lang RESTART IDENTITY CASCADE`
+    // );
     const savedlangs = await Promise.all(
       langs.map(async (el) => {
         const lang = new LangEntity();
@@ -31,7 +35,7 @@ import Status from "./status/status.entity";
       })
     );
 
-    console.log(savedlangs);
+    //console.log(savedlangs);
 
     const savedStatus = await Promise.all(
       status.map(async (el) => {
@@ -42,7 +46,7 @@ import Status from "./status/status.entity";
       })
     );
 
-    console.log(savedStatus);
+    //console.log(savedStatus);
 
     const savedRepos = await Promise.all(
       repo.map(async (repoData) => {
@@ -54,14 +58,19 @@ import Status from "./status/status.entity";
         // Find the status for the repo
         const repostatus = savedStatus.find(
           (st) => st.id === repoData.isPrivate
-        ) as Status;
+        ) as StatusEntity;
         repoEntity.status = repostatus;
 
         // Associate languages with the repo
         const associatedLangIds = lang_by_repo
           .filter((lgByRep) => lgByRep.repo_id === repoData.id)
           .map((lgByRep) => lgByRep.lang_id);
-        console.log(associatedLangIds);
+        //console.log(
+        //"Associated language IDs for repo",
+        //repoData.id,
+        //":",
+        //associatedLangIds
+        //);
 
         // Get the languages that correspond to the associated language IDs
         const mylangs = savedlangs.filter((svLg) =>
@@ -74,11 +83,11 @@ import Status from "./status/status.entity";
       })
     );
 
-    console.log(savedRepos);
-
-    await queryRunner.commitTransaction();
+    console.log(savedRepos.length + " repos created");
   } catch (error) {
-    await queryRunner.rollbackTransaction();
+    await AppDataSource.destroy();
     console.log(error);
+  } finally {
+    await AppDataSource.destroy();
   }
 })();
