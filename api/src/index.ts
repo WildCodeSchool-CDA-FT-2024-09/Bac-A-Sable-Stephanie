@@ -1,12 +1,12 @@
 // import express from "express";
 // import router from "./router";
-// import * as dotenv from "dotenv";
+import * as dotenv from "dotenv";
 // import cors from "cors";
 // import "reflect-metadata";
 // import AppDataSource from "./data-source";
 
-// dotenv.config();
-// const { APP_PORT, CLIENT_URL } = process.env;
+dotenv.config();
+const { PORT } = process.env;
 
 // const app = express();
 
@@ -85,7 +85,7 @@ import LangResolver from "./langs/lang.resolvers";
   });
 
   const { url } = await startStandaloneServer(server, {
-    listen: { port: 4000 },
+    listen: { port: Number(PORT) },
   });
 
   console.log(`🚀  Server ready at: ${url}`);

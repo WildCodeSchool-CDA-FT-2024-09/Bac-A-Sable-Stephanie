@@ -8,7 +8,8 @@
     "fetch": "gh repo list brewost --json id,name,url,isPrivate,languages >> ./data/raw.json",
     "create": "ts-node-dev ./data/create.ts",
     "dev": "ts-node-dev ./src/index.ts",
-    "seed": "ts-node-dev ./src/seeder.ts"
+    "seed": "ts-node-dev ./src/seeder.ts",
+    "full": "npm run seed && npm run dev"
   },
   "author": "",
   "license": "ISC",
@@ -27,6 +28,7 @@
     "graphql": "^16.9.0",
     "graphql-scalars": "^1.23.0",
     "joi": "^17.13.3",
+    "pg": "^8.13.1",
     "reflect-metadata": "^0.2.2",
     "sqlite3": "^5.1.7",
     "type-graphql": "^2.0.0-rc.2",
