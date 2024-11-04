@@ -8,11 +8,7 @@ function Navbar() {
           All my Repos, so many repos
         </h1>
         <Link to="/" className="cursor-pointer">
-          <img
-            src="src/assets/home_icon.png"
-            alt="home icon"
-            className="h-16 w-16"
-          />
+          <img src="/home_icon.png" alt="home icon" className="h-16 w-16" />
         </Link>
       </div>
     </header>
