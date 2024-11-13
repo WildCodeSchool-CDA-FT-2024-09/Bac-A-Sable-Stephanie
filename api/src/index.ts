@@ -31,6 +31,7 @@ import { buildSchema } from "type-graphql";
 import RepoResolver from "./repos/repo.resolvers";
 import CommentResolver from "./comment/comment.resolver";
 import LangResolver from "./langs/lang.resolvers";
+import UserResolver from "./user/user.resolver";
 
 // const typeDefs = `#graphql
 
@@ -77,7 +78,7 @@ import LangResolver from "./langs/lang.resolvers";
 (async () => {
   await AppDataSource.initialize();
   const schema = await buildSchema({
-    resolvers: [RepoResolver, CommentResolver, LangResolver],
+    resolvers: [RepoResolver, CommentResolver, LangResolver, UserResolver],
   });
 
   const server = new ApolloServer({
@@ -86,6 +87,10 @@ import LangResolver from "./langs/lang.resolvers";
 
   const { url } = await startStandaloneServer(server, {
     listen: { port: Number(PORT) },
+    // context: async ({ req, res }) => {
+    //   console.info(req);
+    //   return { res };
+    // },
   });
 
   console.log(`🚀  Server ready at: ${url}`);
